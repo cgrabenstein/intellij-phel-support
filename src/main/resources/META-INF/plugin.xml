@@ -25,6 +25,11 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-
+        <fileType
+                name="Phel File"
+                implementationClass="org.phellang.phelplugin.PhelFileType"
+                fieldName="INSTANCE"
+                language="phel"
+                extensions="phel"/>
     </extensions>
 </idea-plugin>
