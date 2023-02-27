@@ -27,7 +27,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileType
                 name="Phel File"
-                implementationClass="org.phellang.phelplugin.PhelFileType"
+                implementationClass="org.intellij.phel.PhelFileType"
                 fieldName="INSTANCE"
                 language="phel"
                 extensions="phel"/>

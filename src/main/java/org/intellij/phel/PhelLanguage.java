@@ -1,4 +1,4 @@
-package org.phellang.phelplugin;
+package org.intellij.phel;
 
 import com.intellij.lang.Language;
 
