@@ -1,6 +1,6 @@
 {
   generate=[tokenAccessors="no"]
-  parserClass='org.intellij.phel.langugae.parser.PhelParser'
+  parserClass='org.intellij.phel.language.parser.PhelParser'
   psiPackage='org.intellij.phel.language.psi'
   psiImplPackage='org.intellij.phel.language.psi.impl'
 

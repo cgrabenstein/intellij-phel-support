@@ -31,5 +31,8 @@
                 fieldName="INSTANCE"
                 language="phel"
                 extensions="phel"/>
+        <lang.parserDefinition
+                language="phel"
+                implementationClass="org.intellij.phel.language.PhelParserDefinition"/>
     </extensions>
 </idea-plugin>

@@ -1,5 +1,5 @@
 // This is a generated file. Not intended for manual editing.
-package org.intellij.phel.langugae.parser;
+package org.intellij.phel.language.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
