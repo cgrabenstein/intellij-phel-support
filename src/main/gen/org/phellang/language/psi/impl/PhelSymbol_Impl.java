@@ -8,29 +8,23 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static org.phellang.language.psi.PhelTypes.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import org.phellang.language.psi.*;
 
-public class PhelPFormImpl extends PhelFormImpl implements PhelPForm {
+public class PhelSymbol_Impl extends ASTWrapperPsiElement implements PhelSymbol_ {
 
-  public PhelPFormImpl(@NotNull ASTNode node) {
+  public PhelSymbol_Impl(@NotNull ASTNode node) {
     super(node);
   }
 
-  @Override
   public void accept(@NotNull PhelVisitor visitor) {
-    visitor.visitPForm(this);
+    visitor.visitSymbol_(this);
   }
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof PhelVisitor) accept((PhelVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @NotNull
-  public List<PhelForm> getForms() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, PhelForm.class);
   }
 
 }

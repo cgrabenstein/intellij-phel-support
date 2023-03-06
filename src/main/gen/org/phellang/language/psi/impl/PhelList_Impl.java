@@ -11,14 +11,14 @@ import static org.phellang.language.psi.PhelTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import org.phellang.language.psi.*;
 
-public class PhelCommentedImpl extends ASTWrapperPsiElement implements PhelCommented {
+public class PhelList_Impl extends ASTWrapperPsiElement implements PhelList_ {
 
-  public PhelCommentedImpl(@NotNull ASTNode node) {
+  public PhelList_Impl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PhelVisitor visitor) {
-    visitor.visitCommented(this);
+    visitor.visitList_(this);
   }
 
   @Override
@@ -28,9 +28,9 @@ public class PhelCommentedImpl extends ASTWrapperPsiElement implements PhelComme
   }
 
   @Override
-  @Nullable
-  public PhelForm getForm() {
-    return findChildByClass(PhelForm.class);
+  @NotNull
+  public List<PhelSymbol_> getSymbol_List() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PhelSymbol_.class);
   }
 
 }

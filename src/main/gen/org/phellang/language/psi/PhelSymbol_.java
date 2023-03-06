@@ -5,9 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface PhelAccess extends PhelSForm {
-
-  @NotNull
-  PhelSymbol getSymbol();
+public interface PhelSymbol_ extends PsiElement {
 
 }
