@@ -14,7 +14,17 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    Phel plugin
+<p>Phel is a functional programming language that compiles to PHP. It is a dialect of Lisp inspired by Clojure and Janet.</p>
+<b>Features</b>
+<ul>
+  <li>Built on PHP's ecosystem</li>
+  <li>Good error reporting</li>
+  <li>Persistent Datastructures (Lists, Vectors, Maps and Sets)</li>
+  <li>Macros</li>
+  <li>Recursive functions</li>
+  <li>Powerful but simple Syntax</li>
+  <li>REPL</li>
+</ul>
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
