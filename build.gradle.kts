@@ -1,6 +1,10 @@
+import org.jetbrains.grammarkit.tasks.GenerateLexerTask
+import org.jetbrains.grammarkit.tasks.GenerateParserTask
+
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.10.1"
+    id("org.jetbrains.intellij.platform") version "2.0.1"
+    id("org.jetbrains.grammarkit") version "2022.3.2.2"
 }
 
 group = "org.phellang"
@@ -8,6 +12,9 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
 sourceSets {
@@ -18,34 +25,59 @@ sourceSets {
     }
 }
 
-// Configure Gradle IntelliJ Plugin
-// Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
-intellij {
-    version.set("2022.1.4")
-    type.set("IC") // Target IDE Platform
+// Configure IntelliJ Platform Dependencies
+dependencies {
+    intellijPlatform {
+        intellijIdeaCommunity("2024.2.5")
+        bundledPlugin("com.intellij.java")
+        
+        pluginVerifier()
+        zipSigner()
+        instrumentationTools()
+    }
+}
 
-    plugins.set(listOf(/* Plugin Dependencies */))
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+val generatePhelLexer = tasks.register<GenerateLexerTask>("generatePhelLexer") {
+    sourceFile.set(file("src/main/java/org/phellang/language/Phel.flex"))
+    targetOutputDir.set(file("src/main/gen/org/phellang/language/"))
+    purgeOldFiles.set(true)
+}
+
+val generatePhelParser = tasks.register<GenerateParserTask>("generatePhelParser") {
+    sourceFile.set(file("src/main/java/org/phellang/language/Phel.bnf"))
+    targetRootOutputDir.set(file("src/main/gen"))
+    pathToParser.set("org/phellang/language/parser/PhelParser.java")
+    pathToPsiRoot.set("org/phellang/language/psi")
+    purgeOldFiles.set(true)
 }
 
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
+        options.release.set(21)
+        dependsOn(generatePhelLexer, generatePhelParser)
     }
 
-    patchPluginXml {
-        sinceBuild.set("221")
-        untilBuild.set("231.*")
-    }
+    intellijPlatform {
+        patchPluginXml {
+            sinceBuild.set("242")
+            untilBuild.set("242.*")
+        }
 
-    signPlugin {
-        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
-        privateKey.set(System.getenv("PRIVATE_KEY"))
-        password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
-    }
+        signPlugin {
+            certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
+            privateKey.set(System.getenv("PRIVATE_KEY"))
+            password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
+        }
 
-    publishPlugin {
-        token.set(System.getenv("PUBLISH_TOKEN"))
+        publishPlugin {
+            token.set(System.getenv("PUBLISH_TOKEN"))
+        }
     }
 }
