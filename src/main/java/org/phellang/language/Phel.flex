@@ -15,21 +15,17 @@ import static com.intellij.psi.TokenType.WHITE_SPACE;
 %unicode
 
 %state SYMBOL0, SYMBOL1, SYMBOL2, SYMBOL3
-%state DISPATCH
 
 WHITE_SPACE=\s+
-LINE_COMMENT=;.*
+LINE_COMMENT=#.*
 STR_CHAR=[^\\\"]|\\.|\\\"
 STRING=\" {STR_CHAR}* \"
-// octal numbers: 023, 023N, but not 023M
-NUMBER=[+-]? [0-9]+ (N | M | {NUMBER_EXP} M? | (\.[0-9]*) {NUMBER_EXP}? M?)? // N - BigInteger, M - BigDecimal
-NUMBER_EXP=[eE][+-]?[0-9]+
-HEXNUM=[+-]? "0x" [\da-fA-F]+ N?
-RADIX=[+-]? [0-9]{1,2}r[\da-zA-Z]+
-RATIO=[+-]? [0-9]+"/"[0-9]+
+NUMBER=[+-]? [0-9]+ (\.[0-9]*)? ([eE][+-]?[0-9]+)?
+HEXNUM=[+-]? "0x" [\da-fA-F_]+ 
+BINNUM=[+-]? "0b" [01_]+
+OCTNUM=[+-]? "0" [0-7_]+
 CHARACTER=\\([btrnf]|u[0-9a-fA-F]{4}|o[0-7]{3}|backspace|tab|newline|formfeed|return|space|.)
 BAD_LITERAL=\" ([^\\\"]|\\.|\\\")*
-  | [+-]? "0x" \w+
 
 SYM_START=[[\w<>$%&=*+\-!?_|]--#\d] | ".."
 SYM_PART=[.]? {SYM_CHAR} | ".."
@@ -43,12 +39,9 @@ SYM_TAIL={SYM_PART}+ (":" {SYM_PART}+)?
   {WHITE_SPACE}          { return WHITE_SPACE; }
   {LINE_COMMENT}         { return LINE_COMMENT; }
 
-  "#"                    { yybegin(DISPATCH); }
-
   "^"                    { return HAT; }
   "~@"                   { return TILDE_AT; }
   "~"                    { return TILDE; }
-  "@"                    { return AT; }
   "("                    { return PAREN1; }
   ")"                    { return PAREN2; }
   "["                    { return BRACKET1; }
@@ -60,13 +53,14 @@ SYM_TAIL={SYM_PART}+ (":" {SYM_PART}+)?
   "`"                    { return SYNTAX_QUOTE; }
 
   "nil"                  { return NIL; }
+  "NAN"                  { return NAN; }
   true|false             { return BOOL; }
 
   {STRING}               { return STRING; }
   {NUMBER}               { return NUMBER; }
   {HEXNUM}               { return HEXNUM; }
-  {RADIX}                { return RDXNUM; }
-  {RATIO}                { return RATIO; }
+  {BINNUM}               { return BINNUM; }
+  {OCTNUM}               { return OCTNUM; }
   {CHARACTER}            { return CHAR; }
   {BAD_LITERAL}          { return BAD_CHARACTER; }
 
@@ -106,26 +100,6 @@ SYM_TAIL={SYM_PART}+ (":" {SYM_PART}+)?
 
 <YYINITIAL, SYMBOL2, SYMBOL3> {
   "/" {SYM_ANY}+         { yybegin(YYINITIAL); return BAD_CHARACTER; }
-}
-
-<DISPATCH> {
-  "^"                    { yybegin(YYINITIAL); return SHARP_HAT; }  // Meta
-  "'"                    { yybegin(YYINITIAL); return SHARP_QUOTE; }  // Var
-  "\""                   { yybegin(YYINITIAL); yypushback(1); return SHARP; }  // Regex
-  "("                    { yybegin(YYINITIAL); yypushback(1); return SHARP; }  // Fn
-  "{"                    { yybegin(YYINITIAL); yypushback(1); return SHARP; }  // Set
-  "="                    { yybegin(YYINITIAL); return SHARP_EQ; }  // Eval
-  "!"                    { yybegin(YYINITIAL); return SHARP_COMMENT; }  // Comment
-  "<"                    { yybegin(YYINITIAL); return BAD_CHARACTER; }  // Unreadable
-  "_"                    { yybegin(YYINITIAL); return SHARP_COMMENT; }  // Discard
-  "?@"                   { yybegin(YYINITIAL); return SHARP_QMARK_AT; }  // Conditional w/ Splicing
-  "?"                    { yybegin(YYINITIAL); return SHARP_QMARK; }  // Conditional
-  "#"                    { yybegin(YYINITIAL); return SHARP_SYM; }  // Conditional
-  ":"                    { yybegin(YYINITIAL); yypushback(yylength()); return SHARP_NS; }  // Map ns prefix
-  [\s\w]                 { yybegin(YYINITIAL); yypushback(yylength()); return SHARP; }
-  [^]                    { yybegin(YYINITIAL); yypushback(yylength()); return BAD_CHARACTER; }
-
-  <<EOF>>                { yybegin(YYINITIAL); return BAD_CHARACTER; }
 }
 
 [^] { return BAD_CHARACTER; }
