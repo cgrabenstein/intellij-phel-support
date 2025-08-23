@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.phellang.language.psi.PhelSymbol;
+import org.phellang.language.psi.PhelKeyword;
 
 import java.util.Set;
 
@@ -66,7 +67,9 @@ public class PhelAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (element instanceof PhelSymbol) {
+        if (element instanceof PhelKeyword) {
+            annotatePhelKeyword((PhelKeyword) element, holder);
+        } else if (element instanceof PhelSymbol) {
             PhelSymbol symbol = (PhelSymbol) element;
             String text = symbol.getText();
             
@@ -173,5 +176,16 @@ public class PhelAnnotator implements Annotator {
                     .textAttributes(NAMESPACE_PREFIX)
                     .create();
         }
+    }
+    
+    /**
+     * Annotate keyword elements to ensure proper highlighting
+     */
+    private void annotatePhelKeyword(@NotNull PhelKeyword keyword, @NotNull AnnotationHolder holder) {
+        // Highlight the entire keyword element
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                .range(keyword.getTextRange())
+                .textAttributes(PhelSyntaxHighlighter.KEYWORD)
+                .create();
     }
 }

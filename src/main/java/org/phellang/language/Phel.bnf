@@ -13,12 +13,12 @@
 
   tokens=[
     whitespace='regexp:\s+'
-    //line_comment='regexp:;.*'
+    line_comment='regexp:#.*'
     string='regexp:"([^"]|\\")*"'
     number='regexp:\d+(\.\d*)?([eE][+-]?\d+)?'
     hexnum='regexp:[+-]?0x[\da-fA-F_]+'
     binnum='regexp:[+-]?0b[01_]+'
-    octnum='regexp:[+-]?0[0-7_]+'
+    octnum='regexp:[+-]?0o[0-7_]+'
     char='regexp:\\(u\d{4}|newline|space|backspace|return|.)'
     bool="regexp:true|false"
     nil='nil'
@@ -34,6 +34,7 @@
     colon=':'
     coloncolon='::'
     comma=','
+    comma_at=',@'
     quote="'"
     syntax_quote="`"
 
@@ -44,6 +45,18 @@
     dot='.'
     dotdash='.-'
     slash='/'
+    
+    // Multi-character PHP operators
+    and_and='&&'
+    or_or='||'
+    shift_left='<<'
+    shift_right='>>'
+    not_equal='!='
+    not_identical='!=='
+    increment='++'
+    decrement='--'
+    
+    keyword_token='KEYWORD'
   ]
   extends("p_form|s_form")=form
   extends("map|l_v_form")=p_form
@@ -62,8 +75,8 @@
   consumeTokenMethod("symbol_nsq")="fast"
 }
 
-//root ::= entry * // for LivePreview
-private root_entry ::= not_eof form
+root ::= form *
+private root_entry ::= not_eof form  
 private not_eof ::= !<<eof>>
 
 form ::= form_prefix form_prefix * form_upper | form_inner
@@ -84,11 +97,11 @@ vec ::= '[' vec_body ']'
 map ::= '{' map_body '}'
 symbol ::= symbol_qualified
   {methods=[getName getQualifiedName getQualifier getTextOffset getReference]}
-keyword ::= (':' | '::') symbol_qualified
+keyword ::= keyword_token | (':' | '::') symbol_qualified
   {methods=[getName getNamespace getQualifiedName getTextOffset]}
 private symbol_qualified ::= symbol_plain symbol_nsq?
 symbol_plain ::= sym
-left symbol_nsq ::= '/' sym
+left symbol_nsq ::= '/' (sym | coloncolon | dot | dotdash | hat | tilde | and_and | or_or | shift_left | shift_right | not_equal | not_identical | increment | decrement)
 literal ::= number | hexnum | binnum | octnum | bool | nil | nan | string | char
   {methods=[getLiteralType getLiteralText]}
 
@@ -96,7 +109,7 @@ access ::= ('.' | '.-') symbol
 left access_left ::= ! '.'
 
 metadata ::= "^" (string | symbol | keyword | map)
-reader_macro ::= "'" | "~" | "~@" | "`"
+reader_macro ::= "'" | "~" | "~@" | "`" | "," | ",@"
 
 
 private meta items ::= <<items_entry <<recover>> <<param>>>> * {recoverWhile="<<recover>>"}

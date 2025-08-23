@@ -12,32 +12,38 @@ import javax.swing.*;
 import java.util.Map;
 
 /**
- * Color settings page for Phel language
- * Allows users to customize syntax highlighting colors
+ * Color settings page for Phel language customization
  */
 public class PhelColorSettingsPage implements ColorSettingsPage {
 
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
-            new AttributesDescriptor("Comment", PhelSyntaxHighlighter.COMMENT),
-            new AttributesDescriptor("String", PhelSyntaxHighlighter.STRING),
-            new AttributesDescriptor("Number", PhelSyntaxHighlighter.NUMBER),
-            new AttributesDescriptor("Boolean", PhelSyntaxHighlighter.BOOLEAN),
-            new AttributesDescriptor("Nil literal", PhelSyntaxHighlighter.NIL_LITERAL),
-            new AttributesDescriptor("NAN literal", PhelSyntaxHighlighter.NAN_LITERAL),
-            new AttributesDescriptor("Character", PhelSyntaxHighlighter.CHARACTER),
+            new AttributesDescriptor("Comments", PhelSyntaxHighlighter.COMMENT),
+            new AttributesDescriptor("Strings", PhelSyntaxHighlighter.STRING),
+            new AttributesDescriptor("Numbers", PhelSyntaxHighlighter.NUMBER),
+            new AttributesDescriptor("Keywords", PhelSyntaxHighlighter.KEYWORD_IDENTIFIER),
+            new AttributesDescriptor("Booleans", PhelSyntaxHighlighter.BOOLEAN),
+            new AttributesDescriptor("Nil", PhelSyntaxHighlighter.NIL_LITERAL),
+            new AttributesDescriptor("NAN", PhelSyntaxHighlighter.NAN_LITERAL),
+            new AttributesDescriptor("Characters", PhelSyntaxHighlighter.CHARACTER),
             new AttributesDescriptor("Parentheses", PhelSyntaxHighlighter.PARENTHESES),
             new AttributesDescriptor("Brackets", PhelSyntaxHighlighter.BRACKETS),
             new AttributesDescriptor("Braces", PhelSyntaxHighlighter.BRACES),
             new AttributesDescriptor("Quote", PhelSyntaxHighlighter.QUOTE),
-            new AttributesDescriptor("Syntax quote (quasiquote)", PhelSyntaxHighlighter.SYNTAX_QUOTE),
+            new AttributesDescriptor("Syntax Quote", PhelSyntaxHighlighter.SYNTAX_QUOTE),
             new AttributesDescriptor("Unquote", PhelSyntaxHighlighter.UNQUOTE),
-            new AttributesDescriptor("Unquote splicing", PhelSyntaxHighlighter.UNQUOTE_SPLICING),
-            new AttributesDescriptor("Symbol", PhelSyntaxHighlighter.SYMBOL),
-            new AttributesDescriptor("Keyword", PhelSyntaxHighlighter.KEYWORD_IDENTIFIER),
+            new AttributesDescriptor("Unquote Splicing", PhelSyntaxHighlighter.UNQUOTE_SPLICING),
+            new AttributesDescriptor("Symbols", PhelSyntaxHighlighter.SYMBOL),
             new AttributesDescriptor("Metadata", PhelSyntaxHighlighter.METADATA),
-            new AttributesDescriptor("Dot operator", PhelSyntaxHighlighter.DOT_OPERATOR),
+            new AttributesDescriptor("Dot Operator", PhelSyntaxHighlighter.DOT_OPERATOR),
             new AttributesDescriptor("Comma", PhelSyntaxHighlighter.COMMA),
-            new AttributesDescriptor("Bad character", PhelSyntaxHighlighter.BAD_CHARACTER),
+            new AttributesDescriptor("Bad Characters", PhelSyntaxHighlighter.BAD_CHARACTER),
+            // Additional descriptors for annotator colors
+            new AttributesDescriptor("PHP Interop", PhelAnnotator.PHP_INTEROP),
+            new AttributesDescriptor("PHP Variables", PhelAnnotator.PHP_VARIABLE),
+            new AttributesDescriptor("Core Functions", PhelAnnotator.CORE_FUNCTION),
+            new AttributesDescriptor("Macros", PhelAnnotator.MACRO),
+            new AttributesDescriptor("Special Forms", PhelAnnotator.SPECIAL_FORM),
+            new AttributesDescriptor("Namespace Prefix", PhelAnnotator.NAMESPACE_PREFIX),
     };
 
     @Nullable
@@ -55,55 +61,102 @@ public class PhelColorSettingsPage implements ColorSettingsPage {
     @NotNull
     @Override
     public String getDemoText() {
-        return "# This is a comment - demonstrates Phel syntax highlighting\n" +
+        return "# Phel Syntax Highlighting Demo - Fixed and Complete!" +
+                "\n# This file demonstrates all 25+ syntax highlighting features" +
                 "\n" +
-                "(ns my-app\\examples\n" +
-                "  (:require phel\\core :refer [print-str str])\n" +
-                "  (:require phel\\http :as http)\n" +
-                "  (:use \\DateTime))\n" +
+                "\n(ns demo\\syntax-showcase" +
+                "\n  (:require phel\\core :refer [print-str str map filter])" +
+                "\n  (:require phel\\http :as http)" +
+                "\n  (:require phel\\str :as s)" +
+                "\n  (:use \\DateTime \\Exception))" +
                 "\n" +
-                "# Boolean and nil literals\n" +
-                "(def my-config {:debug true :prod false :cache nil :timeout NAN})\n" +
+                "\n# Boolean and nil literals - distinct colors" +
+                "\n(def config {:debug true :prod false :cache nil :timeout NAN})" +
                 "\n" +
-                "# Numbers in different bases\n" +
-                "(def numbers [42 0xFF 0b1010 0o777 3.14159 -1.5e10])\n" +
+                "\n# Numbers in all supported bases - unified number highlighting" +
+                "\n(def numbers [42 0xFF 0b1010 0o777 3.14159 -1.5e10])" +
                 "\n" +
-                "# Characters and strings\n" +
-                "(def greeting \"Hello, Phel!\")\n" +
-                "(def newline-char \\newline)\n" +
-                "(def unicode-char \\u03BB)\n" +
+                "\n# Character literals and strings - proper string highlighting" +
+                "\n(def greeting \"Hello, Phel world!\")" +
+                "\n(def special-chars [\\newline \\tab \\u03BB \\\\])" +
                 "\n" +
-                "# Function with destructuring\n" +
-                "(defn process-request\n" +
-                "  \"Processes an HTTP request with destructuring\"\n" +
-                "  [{:method method :path path :headers headers}]\n" +
-                "  (let [[first-segment & rest-segments] (str/split path \"/\")]\n" +
-                "    (case method\n" +
-                "      \"GET\" (handle-get first-segment rest-segments)\n" +
-                "      \"POST\" (handle-post path headers))))\n" +
+                "\n# Advanced destructuring with highlighting" +
+                "\n(defn process-data" +
+                "\n  \"Function with comprehensive destructuring\"" +
+                "\n  {:export true}" +
+                "\n  [{:keys keys :method method :headers headers} users]" +
+                "\n  (let [[first-user & rest-users] users" +
+                "\n        {:name name :age age} first-user]" +
+                "\n    (case method" +
+                "\n      \"GET\" (handle-get-request name age)" +
+                "\n      \"POST\" (handle-post-request keys headers)" +
+                "\n      (throw (php/new Exception \"Unsupported method\")))))" +
                 "\n" +
-                "# Macros with quote/unquote\n" +
-                "(defmacro when-debug [& body]\n" +
-                "  `(if (:debug my-config)\n" +
-                "     (do ,@body)))\n" +
+                "\n# Macro with full quote/unquote highlighting" +
+                "\n(defmacro when-feature [feature & body]" +
+                "\n  `(when (get config ,feature)" +
+                "\n    (do ,@body)))" +
                 "\n" +
-                "# PHP interop\n" +
-                "(def now (php/new DateTime))\n" +
-                "(def formatted (php/-> now (format \"Y-m-d H:i:s\")))\n" +
-                "(def timestamp (php/:: DateTime (createFromFormat \"U\" \"1234567890\")))\n" +
+                "\n# PHP interop with distinct highlighting" +
+                "\n(def now (php/new DateTime))" +
+                "\n(def formatted (php/-> now (format \"Y-m-d H:i:s\")))" +
+                "\n(def static-call (php/:: DateTime (createFromFormat \"U\" \"1234567890\")))" +
+                "\n(def server-data (get php/$_SERVER \"REQUEST_METHOD\"))" +
                 "\n" +
-                "# Advanced features\n" +
-                "(def computed-values\n" +
-                "  (for [x :range [1 10]\n" +
-                "        :when (even? x)\n" +
-                "        :let [squared (* x x)]]\n" +
-                "    {:original x :squared squared}))\n" +
+                "\n# Namespace functions with prefix highlighting" +
+                "\n(def processed (s/join \", \" (map str [1 2 3])))" +
+                "\n(def response (http/response-from-map {:status 200 :body \"OK\"}))" +
                 "\n" +
-                "# Metadata and special forms\n" +
-                "(def ^:private secret-value 42)\n" +
-                "(def my-var (var 0))\n" +
-                "(binding [*debug-mode* true]\n" +
-                "  (println \"Debug enabled\"))";
+                "\n# Advanced control flow and loops" +
+                "\n(def results" +
+                "\n  (for [x :range [1 10]" +
+                "\n        :when (even? x)" +
+                "\n        :let [squared (* x x)]]" +
+                "\n        :reduce [acc []]" +
+                "\n    (conj acc {:num x :squared squared})))" +
+                "\n" +
+                "\n# Variable manipulation and metadata" +
+                "\n(def ^:private secret (var 42))" +
+                "\n(swap! secret inc)" +
+                "\n(def readonly-value (deref secret))" +
+                "\n" +
+                "\n# Core functions and predicates - specialized highlighting" +
+                "\n(defn analyze-collection [coll]" +
+                "\n  (cond" +
+                "\n    (empty? coll) :empty" +
+                "\n    (vector? coll) :vector" +
+                "\n    (map? coll) :map" +
+                "\n    (set? coll) :set" +
+                "\n    (list? coll) :list" +
+                "\n    :else :unknown))" +
+                "\n" +
+                "\n# Bitwise operations" +
+                "\n(def flags (bit-or 0b0001 0b0010 0b0100))" +
+                "\n(def masked (bit-and flags 0b0110))" +
+                "\n" +
+                "\n# Threading macros with proper operator highlighting" +
+                "\n(def processed-text" +
+                "\n  (-> \"  Hello World  \"" +
+                "\n      s/trim" +
+                "\n      s/lower-case" +
+                "\n      (s/replace \"world\" \"Phel\")" +
+                "\n      (str \"!\")))" +
+                "\n" +
+                "\n# Exception handling" +
+                "\n(defn safe-divide [a b]" +
+                "\n  (try" +
+                "\n    (/ a b)" +
+                "\n    (catch \\DivisionByZeroError e" +
+                "\n      (php/-> e (getMessage)))" +
+                "\n    (finally" +
+                "\n      (println \"Division attempt completed\"))))" +
+                "\n" +
+                "\n# REPL and documentation" +
+                "\n(comment" +
+                "\n  \"This is a comment block for REPL experimentation\"" +
+                "\n  (doc map)" +
+                "\n  (require phel\\test :as test)" +
+                "\n  (test/run-tests))";
     }
 
     @Nullable

@@ -11,20 +11,8 @@ public class PhelVisitor extends PsiElementVisitor {
     visitSForm(o);
   }
 
-  public void visitCommented(@NotNull PhelCommented o) {
-    visitPsiElement(o);
-  }
-
-  public void visitConstructor(@NotNull PhelConstructor o) {
-    visitPForm(o);
-  }
-
   public void visitForm(@NotNull PhelForm o) {
     visitPsiElement(o);
-  }
-
-  public void visitFun(@NotNull PhelFun o) {
-    visitList(o);
   }
 
   public void visitKeyword(@NotNull PhelKeyword o) {
@@ -59,16 +47,8 @@ public class PhelVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitRegexp(@NotNull PhelRegexp o) {
-    visitLiteral(o);
-  }
-
   public void visitSForm(@NotNull PhelSForm o) {
     visitForm(o);
-  }
-
-  public void visitSet(@NotNull PhelSet o) {
-    visitPForm(o);
   }
 
   public void visitSymbol(@NotNull PhelSymbol o) {

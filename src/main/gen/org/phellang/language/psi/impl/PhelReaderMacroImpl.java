@@ -27,10 +27,4 @@ public class PhelReaderMacroImpl extends ASTWrapperPsiElement implements PhelRea
     else super.accept(visitor);
   }
 
-  @Override
-  @Nullable
-  public PhelSymbol getSymbol() {
-    return findChildByClass(PhelSymbol.class);
-  }
-
 }

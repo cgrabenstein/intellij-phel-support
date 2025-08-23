@@ -27,7 +27,7 @@ class PhelParserDefinition implements ParserDefinition {
 
     @Override
     public @NotNull TokenSet getCommentTokens() {
-        return PhelTokenSets.COMMENTED;
+        return PhelTokenSets.LINE_COMMENT;
     }
 
     @Override

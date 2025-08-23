@@ -105,7 +105,7 @@ public class PhelSyntaxHighlighter extends SyntaxHighlighterBase {
     private static final TextAttributesKey[] UNQUOTE_KEYS = new TextAttributesKey[]{UNQUOTE};
     private static final TextAttributesKey[] UNQUOTE_SPLICING_KEYS = new TextAttributesKey[]{UNQUOTE_SPLICING};
     private static final TextAttributesKey[] SYMBOL_KEYS = new TextAttributesKey[]{SYMBOL};
-    private static final TextAttributesKey[] KEYWORD_KEYS = new TextAttributesKey[]{KEYWORD_IDENTIFIER};
+    private static final TextAttributesKey[] KEYWORD_KEYS = new TextAttributesKey[]{KEYWORD};
     private static final TextAttributesKey[] METADATA_KEYS = new TextAttributesKey[]{METADATA};
     private static final TextAttributesKey[] DOT_KEYS = new TextAttributesKey[]{DOT_OPERATOR};
     private static final TextAttributesKey[] COMMA_KEYS = new TextAttributesKey[]{COMMA};
@@ -123,8 +123,8 @@ public class PhelSyntaxHighlighter extends SyntaxHighlighterBase {
     public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
         String tokenName = tokenType.toString();
         
-        // Comments (handled by token name since not in PhelTypes)
-        if ("LINE_COMMENT".equals(tokenName)) {
+        // Comments
+        if (tokenType.equals(PhelTypes.LINE_COMMENT)) {
             return COMMENT_KEYS;
         }
         
@@ -133,7 +133,7 @@ public class PhelSyntaxHighlighter extends SyntaxHighlighterBase {
             return STRING_KEYS;
         }
         if (tokenType.equals(PhelTypes.NUMBER) || tokenType.equals(PhelTypes.HEXNUM) || 
-            "BINNUM".equals(tokenName) || "OCTNUM".equals(tokenName)) {
+            tokenType.equals(PhelTypes.BINNUM) || tokenType.equals(PhelTypes.OCTNUM)) {
             return NUMBER_KEYS;
         }
         if (tokenType.equals(PhelTypes.BOOL)) {
@@ -142,7 +142,7 @@ public class PhelSyntaxHighlighter extends SyntaxHighlighterBase {
         if (tokenType.equals(PhelTypes.NIL)) {
             return NIL_KEYS;
         }
-        if ("NAN".equals(tokenName)) {
+        if (tokenType.equals(PhelTypes.NAN)) {
             return NAN_KEYS;
         }
         if (tokenType.equals(PhelTypes.CHAR)) {
@@ -167,16 +167,29 @@ public class PhelSyntaxHighlighter extends SyntaxHighlighterBase {
         if (tokenType.equals(PhelTypes.SYNTAX_QUOTE)) {
             return SYNTAX_QUOTE_KEYS;
         }
-        if (tokenType.equals(PhelTypes.TILDE)) {
+        if (tokenType.equals(PhelTypes.TILDE) || tokenType.equals(PhelTypes.COMMA)) {
             return UNQUOTE_KEYS;
         }
-        if (tokenType.equals(PhelTypes.TILDE_AT)) {
+        if (tokenType.equals(PhelTypes.TILDE_AT) || tokenType.equals(PhelTypes.COMMA_AT)) {
             return UNQUOTE_SPLICING_KEYS;
         }
         
-        // Keywords (both : and :: variants)
+        // Keywords - complete keyword elements (:something, ::something)
+        if (tokenType.equals(PhelTypes.KEYWORD) || tokenType.equals(PhelTypes.KEYWORD_TOKEN)) {
+            return KEYWORD_KEYS;
+        }
+        
+        // Individual colon tokens (for partial keywords during typing)
         if (tokenType.equals(PhelTypes.COLON) || tokenType.equals(PhelTypes.COLONCOLON)) {
             return KEYWORD_KEYS;
+        }
+        
+        // Multi-character PHP operators
+        if (tokenType.equals(PhelTypes.AND_AND) || tokenType.equals(PhelTypes.OR_OR) ||
+            tokenType.equals(PhelTypes.SHIFT_LEFT) || tokenType.equals(PhelTypes.SHIFT_RIGHT) ||
+            tokenType.equals(PhelTypes.NOT_EQUAL) || tokenType.equals(PhelTypes.NOT_IDENTICAL) ||
+            tokenType.equals(PhelTypes.INCREMENT) || tokenType.equals(PhelTypes.DECREMENT)) {
+            return SYMBOL_KEYS;
         }
         
         // Metadata
