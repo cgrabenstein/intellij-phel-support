@@ -51,5 +51,11 @@
         <annotator
                 language="Phel"
                 implementationClass="org.phellang.PhelAnnotator"/>
+        <completion.contributor
+                language="Phel"
+                implementationClass="org.phellang.completion.PhelCompletionContributor"/>
+        <lang.documentationProvider
+                language="Phel"
+                implementationClass="org.phellang.completion.PhelDocumentationProvider"/>
     </extensions>
 </idea-plugin>
