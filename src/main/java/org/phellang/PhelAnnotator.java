@@ -1,0 +1,177 @@
+package org.phellang;
+
+import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.phellang.language.psi.PhelSymbol;
+
+import java.util.Set;
+
+import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
+
+/**
+ * Advanced annotator for context-sensitive Phel syntax highlighting
+ * Handles PHP interop, built-in functions, and namespace-aware highlighting
+ */
+public class PhelAnnotator implements Annotator {
+
+    // PHP interop highlighting
+    public static final TextAttributesKey PHP_INTEROP =
+            createTextAttributesKey("PHEL_PHP_INTEROP", DefaultLanguageHighlighterColors.STATIC_METHOD);
+    
+    public static final TextAttributesKey PHP_VARIABLE =
+            createTextAttributesKey("PHEL_PHP_VARIABLE", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE);
+
+    // Built-in function categories
+    public static final TextAttributesKey CORE_FUNCTION =
+            createTextAttributesKey("PHEL_CORE_FUNCTION", DefaultLanguageHighlighterColors.PREDEFINED_SYMBOL);
+    
+    public static final TextAttributesKey MACRO =
+            createTextAttributesKey("PHEL_MACRO", DefaultLanguageHighlighterColors.KEYWORD);
+    
+    public static final TextAttributesKey SPECIAL_FORM =
+            createTextAttributesKey("PHEL_SPECIAL_FORM", DefaultLanguageHighlighterColors.KEYWORD);
+
+    // Namespace highlighting  
+    public static final TextAttributesKey NAMESPACE_PREFIX =
+            createTextAttributesKey("PHEL_NAMESPACE", DefaultLanguageHighlighterColors.CLASS_NAME);
+
+    // Core Phel special forms
+    private static final Set<String> SPECIAL_FORMS = Set.of(
+            "def", "fn", "if", "let", "do", "quote", "var", "recur", "throw", "try", "catch", "finally",
+            "loop", "case", "cond", "when", "when-not", "when-let", "if-let", "if-not", "ns",
+            "defn", "defn-", "defmacro", "defmacro-", "defstruct", "definterface"
+    );
+
+    // Core Phel macros
+    private static final Set<String> MACROS = Set.of(
+            "and", "or", "->", "->>", "as->", "cond->", "cond->>", "some->", "some->>",
+            "doto", "for", "dofor", "foreach", "comment", "declare"
+    );
+
+    // Common core functions (subset for performance)
+    private static final Set<String> CORE_FUNCTIONS = Set.of(
+            "map", "filter", "reduce", "apply", "count", "first", "rest", "cons", "conj",
+            "get", "get-in", "assoc", "dissoc", "update", "merge", "keys", "values",
+            "str", "print", "println", "identity", "comp", "partial", "constantly",
+            "inc", "dec", "pos?", "neg?", "zero?", "even?", "odd?", "nil?", "some?",
+            "true?", "false?", "boolean?", "number?", "string?", "keyword?", "symbol?",
+            "list?", "vector?", "map?", "set?", "seq?", "coll?", "empty?", "not-empty"
+    );
+
+    @Override
+    public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+        if (element instanceof PhelSymbol) {
+            PhelSymbol symbol = (PhelSymbol) element;
+            String text = symbol.getText();
+            
+            if (text != null) {
+                annotateSymbol(symbol, text, holder);
+            }
+        }
+    }
+
+    private void annotateSymbol(@NotNull PhelSymbol symbol, @NotNull String text, @NotNull AnnotationHolder holder) {
+        // PHP interop patterns
+        if (isPhpInterop(text)) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .range(symbol.getTextRange())
+                    .textAttributes(PHP_INTEROP)
+                    .create();
+            return;
+        }
+        
+        // PHP variables (superglobals)
+        if (isPhpVariable(text)) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .range(symbol.getTextRange())
+                    .textAttributes(PHP_VARIABLE)
+                    .create();
+            return;
+        }
+        
+        // Namespace prefix highlighting
+        if (hasNamespacePrefix(text)) {
+            highlightNamespacePrefix(symbol, text, holder);
+            return;
+        }
+        
+        // Special forms (highest priority)
+        if (SPECIAL_FORMS.contains(text)) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .range(symbol.getTextRange())
+                    .textAttributes(SPECIAL_FORM)
+                    .create();
+            return;
+        }
+        
+        // Macros
+        if (MACROS.contains(text)) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .range(symbol.getTextRange())
+                    .textAttributes(MACRO)
+                    .create();
+            return;
+        }
+        
+        // Core functions
+        if (CORE_FUNCTIONS.contains(text)) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .range(symbol.getTextRange())
+                    .textAttributes(CORE_FUNCTION)
+                    .create();
+            return;
+        }
+    }
+
+    private boolean isPhpInterop(@NotNull String text) {
+        return text.startsWith("php/") || 
+               text.equals("php/->") || 
+               text.equals("php/::") ||
+               text.equals("php/new") ||
+               text.startsWith("php/a") ||  // php/aget, php/aset, php/apush, php/aunset
+               text.startsWith("php/o");    // php/oset
+    }
+
+    private boolean isPhpVariable(@NotNull String text) {
+        return text.startsWith("php/$") ||
+               text.equals("php/$_SERVER") ||
+               text.equals("php/$_GET") ||
+               text.equals("php/$_POST") ||
+               text.equals("php/$_COOKIE") ||
+               text.equals("php/$_FILES") ||
+               text.equals("php/$_SESSION") ||
+               text.equals("php/$GLOBALS");
+    }
+
+    private boolean hasNamespacePrefix(@NotNull String text) {
+        // Check for namespace separators: / or \
+        return (text.contains("/") && !text.startsWith("php/")) || 
+               text.contains("\\");
+    }
+
+    private void highlightNamespacePrefix(@NotNull PhelSymbol symbol, @NotNull String text, @NotNull AnnotationHolder holder) {
+        int separatorIndex = -1;
+        
+        // Find the last separator (/ or \)
+        int slashIndex = text.lastIndexOf('/');
+        int backslashIndex = text.lastIndexOf('\\');
+        separatorIndex = Math.max(slashIndex, backslashIndex);
+        
+        if (separatorIndex > 0) {
+            // Highlight only the namespace part (before the separator)
+            int startOffset = symbol.getTextRange().getStartOffset();
+            int endOffset = startOffset + separatorIndex;
+            
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .range(TextRange.create(startOffset, endOffset))
+                    .textAttributes(NAMESPACE_PREFIX)
+                    .create();
+        }
+    }
+}

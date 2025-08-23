@@ -43,5 +43,13 @@
         <lang.parserDefinition
                 language="Phel"
                 implementationClass="org.phellang.language.PhelParserDefinition"/>
+        <lang.syntaxHighlighterFactory
+                language="Phel"
+                implementationClass="org.phellang.PhelSyntaxHighlighterFactory"/>
+        <colorSettingsPage
+                implementation="org.phellang.PhelColorSettingsPage"/>
+        <annotator
+                language="Phel"
+                implementationClass="org.phellang.PhelAnnotator"/>
     </extensions>
 </idea-plugin>
