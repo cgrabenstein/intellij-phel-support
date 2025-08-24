@@ -1,0 +1,114 @@
+# Phel IntelliJ Plugin Development Rules
+
+## Project Context
+
+This is an IntelliJ IDEA plugin for the [Phel programming language](https://phel-lang.org/) - a functional programming language that compiles to PHP. Phel is a Lisp dialect inspired by Clojure and Janet.
+
+## Official Documentation References
+
+- Official JetBrains Plugin SDK: https://plugins.jetbrains.com/docs/intellij/welcome.html
+- GitHub Documentation root: https://github.com/phel-lang/phel-lang.org/tree/master/content/documentation
+
+## Language Specification Compliance
+
+Always refer to the official Phel documentation as the single source of truth. Key language features:
+
+### Comments
+
+- Line comments start with `#` character
+- No block comments supported
+
+### Keywords
+
+- Simple keywords: `:keyword`, `:keys`, `:simple-name`
+- Namespaced keywords: `:namespace/keyword`, `:php/array`
+- Current namespace shortcuts: `::foo` (evaluates to `:current-namespace/foo`)
+- Aliased namespace shortcuts: `::alias/foo` (using namespace aliases)
+- Mixed separators: `:my\namespace/keyword` (backslash + forward slash)
+
+### PHP Interoperability
+
+- Static method calls: `(php/:: "ClassName" "methodName")`
+- Instance method calls: `(php/-> $object "method")`
+- Property access: `(php/. $object "property")`
+- All PHP operators supported: `php/+`, `php/-`, `php/*`, `php/%`, etc.
+- Multi-character operators: `php/&&`, `php/||`, `php/<<`, `php/>>`, `php/!=`, `php/!==`, `php/++`, `php/--`
+- Error suppression: `php/@`
+- Bitwise operators: `php/^`, `php/~`
+
+### File Structure
+
+- Every file must start with `(ns namespace\name)` declaration
+- Top-level forms: `def`, `defn`, `defmacro`, comments
+- Bare literals at top level are not idiomatic
+
+## Technical Implementation Guidelines
+
+### Build System
+
+- Gradle with Kotlin DSL (`build.gradle.kts`)
+- IntelliJ Platform Gradle Plugin 2.x
+- Java 21 toolchain
+- IntelliJ IDEA 2024.2.5 platform
+
+### Lexer and Parser (JFlex + Grammar-Kit)
+
+- Lexer: `src/main/java/org/phellang/language/Phel.flex`
+- Grammar: `src/main/java/org/phellang/language/Phel.bnf`
+- Generated files: `src/main/gen/org/phellang/language/`
+
+## Development Standards
+
+### Code Quality
+
+- Follow IntelliJ Platform coding conventions
+- Use `@NotNull` and `@Nullable` annotations
+- Implement proper error handling
+- Add comprehensive JavaDoc comments
+- Use meaningful variable and method names
+
+### Testing Strategy
+
+- Create test `.phel` files for manual testing
+- Always clean up temporary test files after use
+- Suggest to run `./gradlew runIde` for integration testing when you are done with a code change, but do not run it on your own
+- Verify compliance with official Phel examples
+
+### Gradle Tasks
+
+- `./gradlew generatePhelLexer` - Regenerate lexer from .flex
+- `./gradlew generatePhelParser` - Regenerate parser from .bnf  
+- `./gradlew compileJava` - Compile Java sources
+- `./gradlew runIde` - Launch IDE with plugin for testing
+- `./gradlew build` - Full build (may fail if IDE running)
+
+### Plugin Registration (plugin.xml)
+
+Always register new features in `META-INF/plugin.xml`:
+
+```xml
+<lang.syntaxHighlighterFactory language="Phel" implementationClass="..."/>
+<lang.parserDefinition language="Phel" implementationClass="..."/>
+<lang.commenter language="Phel" implementationClass="..."/>
+<colorSettingsPage implementation="..."/>
+<annotator language="Phel" implementationClass="..."/>
+<completion.contributor language="Phel" implementationClass="..."/>
+```
+
+## Error Prevention
+
+### Common Pitfalls
+
+- Don't assume Clojure syntax - always verify against Phel docs
+- Don't forget to regenerate lexer/parser after .flex/.bnf changes
+- Always use `PhelTypes.TOKEN_NAME` in lexer returns
+- Clear Gradle caches if encountering build issues
+
+## Communication Style
+
+- Be precise and technical when discussing implementation details
+- Always cite official Phel documentation links when referencing language features
+- Do not use emojis and other sentences like "You are absolutely right" or similar
+- Provide code examples that are immediately runnable
+- Clean up temporary files after demonstrations
+- Focus on practical, working solutions over theoretical discussions
