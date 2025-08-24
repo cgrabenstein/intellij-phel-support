@@ -60,5 +60,13 @@
         <lang.commenter
                 language="Phel"
                 implementationClass="org.phellang.PhelCommenter"/>
+        <lang.braceMatcher
+                language="Phel"
+                implementationClass="org.phellang.PhelBraceMatcher"/>
+        <lang.quoteHandler
+                language="Phel"
+                implementationClass="org.phellang.PhelQuoteHandler"/>
+        <typedHandler
+                implementation="org.phellang.PhelTypedHandler"/>
     </extensions>
 </idea-plugin>
