@@ -57,5 +57,8 @@
         <lang.documentationProvider
                 language="Phel"
                 implementationClass="org.phellang.completion.PhelDocumentationProvider"/>
+        <lang.commenter
+                language="Phel"
+                implementationClass="org.phellang.PhelCommenter"/>
     </extensions>
 </idea-plugin>
