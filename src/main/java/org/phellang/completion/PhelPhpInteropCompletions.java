@@ -129,10 +129,10 @@ public class PhelPhpInteropCompletions {
     }
 
     private static void addPhpFunction(@NotNull CompletionResultSet result, String name, String signature, String description) {
-        result.addElement(LookupElementBuilder.create(name).withIcon(PHP_FUNCTION_ICON).withTypeText(signature).withTailText(" - " + description, true));
+        result.addElement(PhelCompletionContributor.createNamespacedLookupElement(name, PHP_FUNCTION_ICON, signature, " - " + description));
     }
 
     private static void addPhpVariable(@NotNull CompletionResultSet result, String name, String description) {
-        result.addElement(LookupElementBuilder.create(name).withIcon(PHP_VARIABLE_ICON).withTypeText("PHP variable").withTailText(" - " + description, true));
+        result.addElement(PhelCompletionContributor.createNamespacedLookupElement(name, PHP_VARIABLE_ICON, "PHP variable", " - " + description));
     }
 }

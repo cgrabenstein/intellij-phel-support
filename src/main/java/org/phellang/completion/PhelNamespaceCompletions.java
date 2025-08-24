@@ -167,6 +167,6 @@ public class PhelNamespaceCompletions {
     }
 
     private static void addModuleFunction(@NotNull CompletionResultSet result, String name, String signature, String description) {
-        result.addElement(LookupElementBuilder.create(name).withIcon(MODULE_FUNCTION_ICON).withTypeText(signature).withTailText(" - " + description, true));
+        result.addElement(PhelCompletionContributor.createNamespacedLookupElement(name, MODULE_FUNCTION_ICON, signature, " - " + description));
     }
 }

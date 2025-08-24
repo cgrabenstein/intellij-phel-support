@@ -1,8 +1,11 @@
 package org.phellang.completion;
 
 import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
@@ -28,6 +31,65 @@ public class PhelCompletionContributor extends CompletionContributor {
 
         // Complete after namespace colon
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(PhelTypes.SYM).afterLeaf(PlatformPatterns.psiElement(PhelTypes.COLONCOLON)).withLanguage(org.phellang.PhelLanguage.INSTANCE), new PhelNamespaceKeywordCompletionProvider());
+    }
+
+    /**
+     * Custom insert handler for namespaced completions to prevent text duplication
+     * Handles completions containing '/' by properly replacing the typed prefix
+     */
+    public static class NamespacedInsertHandler implements InsertHandler<LookupElement> {
+        @Override
+        public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
+            Editor editor = context.getEditor();
+            Document document = editor.getDocument();
+            int caretOffset = context.getStartOffset();
+            
+            // Find the start of the current symbol
+            int symbolStart = caretOffset;
+            CharSequence text = document.getCharsSequence();
+            
+            // Move back to find the beginning of the symbol
+            while (symbolStart > 0) {
+                char c = text.charAt(symbolStart - 1);
+                // Stop at whitespace, opening parenthesis, or other delimiters
+                if (Character.isWhitespace(c) || c == '(' || c == '[' || c == '{') {
+                    break;
+                }
+                symbolStart--;
+            }
+            
+            // Replace the entire symbol with the completion
+            int endOffset = context.getTailOffset();
+            String completionText = item.getLookupString();
+            
+            document.replaceString(symbolStart, endOffset, completionText);
+            editor.getCaretModel().moveToOffset(symbolStart + completionText.length());
+        }
+    }
+
+    private static final NamespacedInsertHandler NAMESPACED_INSERT_HANDLER = new NamespacedInsertHandler();
+
+    /**
+     * Creates a lookup element with proper insert handling for namespaced completions
+     */
+    public static LookupElementBuilder createNamespacedLookupElement(String name, Icon icon, String typeText, String tailText) {
+        LookupElementBuilder builder = LookupElementBuilder.create(name);
+        if (icon != null) {
+            builder = builder.withIcon(icon);
+        }
+        if (typeText != null) {
+            builder = builder.withTypeText(typeText);
+        }
+        if (tailText != null) {
+            builder = builder.withTailText(tailText, true);
+        }
+        
+        // Apply custom insert handler for completions containing '/'
+        if (name.contains("/")) {
+            builder = builder.withInsertHandler(NAMESPACED_INSERT_HANDLER);
+        }
+        
+        return builder;
     }
 
     /**
