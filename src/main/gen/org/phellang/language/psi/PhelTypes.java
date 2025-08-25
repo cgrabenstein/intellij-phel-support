@@ -9,22 +9,18 @@ import org.phellang.language.psi.impl.*;
 public interface PhelTypes {
 
   IElementType ACCESS = new PhelElementType("ACCESS");
-  IElementType COMMENTED = new PhelElementType("COMMENTED");
-  IElementType CONSTRUCTOR = new PhelElementType("CONSTRUCTOR");
   IElementType FORM = new PhelElementType("FORM");
-  IElementType FUN = new PhelElementType("FUN");
   IElementType KEYWORD = new PhelElementType("KEYWORD");
   IElementType LIST = new PhelElementType("LIST");
   IElementType LITERAL = new PhelElementType("LITERAL");
   IElementType MAP = new PhelElementType("MAP");
   IElementType METADATA = new PhelElementType("METADATA");
   IElementType READER_MACRO = new PhelElementType("READER_MACRO");
-  IElementType REGEXP = new PhelElementType("REGEXP");
-  IElementType SET = new PhelElementType("SET");
   IElementType SYMBOL = new PhelElementType("SYMBOL");
   IElementType VEC = new PhelElementType("VEC");
 
-  IElementType AT = new PhelTokenType("@");
+  IElementType AND_AND = new PhelTokenType("&&");
+  IElementType BINNUM = new PhelTokenType("binnum");
   IElementType BOOL = new PhelTokenType("bool");
   IElementType BRACE1 = new PhelTokenType("{");
   IElementType BRACE2 = new PhelTokenType("}");
@@ -34,26 +30,27 @@ public interface PhelTypes {
   IElementType COLON = new PhelTokenType(":");
   IElementType COLONCOLON = new PhelTokenType("::");
   IElementType COMMA = new PhelTokenType(",");
+  IElementType COMMA_AT = new PhelTokenType(",@");
+  IElementType DECREMENT = new PhelTokenType("--");
   IElementType DOT = new PhelTokenType(".");
   IElementType DOTDASH = new PhelTokenType(".-");
   IElementType HAT = new PhelTokenType("^");
   IElementType HEXNUM = new PhelTokenType("hexnum");
+  IElementType INCREMENT = new PhelTokenType("++");
+  IElementType KEYWORD_TOKEN = new PhelTokenType("KEYWORD");
+  IElementType LINE_COMMENT = new PhelTokenType("line_comment");
+  IElementType NAN = new PhelTokenType("NAN");
   IElementType NIL = new PhelTokenType("nil");
+  IElementType NOT_EQUAL = new PhelTokenType("!=");
+  IElementType NOT_IDENTICAL = new PhelTokenType("!==");
   IElementType NUMBER = new PhelTokenType("number");
+  IElementType OCTNUM = new PhelTokenType("octnum");
+  IElementType OR_OR = new PhelTokenType("||");
   IElementType PAREN1 = new PhelTokenType("(");
   IElementType PAREN2 = new PhelTokenType(")");
   IElementType QUOTE = new PhelTokenType("'");
-  IElementType RATIO = new PhelTokenType("ratio");
-  IElementType RDXNUM = new PhelTokenType("rdxnum");
-  IElementType SHARP = new PhelTokenType("#");
-  IElementType SHARP_COMMENT = new PhelTokenType("#_");
-  IElementType SHARP_EQ = new PhelTokenType("#=");
-  IElementType SHARP_HAT = new PhelTokenType("#^");
-  IElementType SHARP_NS = new PhelTokenType("#:");
-  IElementType SHARP_QMARK = new PhelTokenType("#?");
-  IElementType SHARP_QMARK_AT = new PhelTokenType("#?@");
-  IElementType SHARP_QUOTE = new PhelTokenType("#'");
-  IElementType SHARP_SYM = new PhelTokenType("##");
+  IElementType SHIFT_LEFT = new PhelTokenType("<<");
+  IElementType SHIFT_RIGHT = new PhelTokenType(">>");
   IElementType SLASH = new PhelTokenType("/");
   IElementType STRING = new PhelTokenType("string");
   IElementType SYM = new PhelTokenType("sym");
@@ -67,17 +64,8 @@ public interface PhelTypes {
       if (type == ACCESS) {
         return new PhelAccessImpl(node);
       }
-      else if (type == COMMENTED) {
-        return new PhelCommentedImpl(node);
-      }
-      else if (type == CONSTRUCTOR) {
-        return new PhelConstructorImpl(node);
-      }
       else if (type == FORM) {
         return new PhelFormImpl(node);
-      }
-      else if (type == FUN) {
-        return new PhelFunImpl(node);
       }
       else if (type == KEYWORD) {
         return new PhelKeywordImpl(node);
@@ -96,12 +84,6 @@ public interface PhelTypes {
       }
       else if (type == READER_MACRO) {
         return new PhelReaderMacroImpl(node);
-      }
-      else if (type == REGEXP) {
-        return new PhelRegexpImpl(node);
-      }
-      else if (type == SET) {
-        return new PhelSetImpl(node);
       }
       else if (type == SYMBOL) {
         return new PhelSymbolImpl(node);

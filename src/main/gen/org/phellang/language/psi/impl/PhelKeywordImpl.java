@@ -28,9 +28,9 @@ public class PhelKeywordImpl extends PhelSFormImpl implements PhelKeyword {
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PhelSymbol getSymbol() {
-    return findNotNullChildByClass(PhelSymbol.class);
+    return findChildByClass(PhelSymbol.class);
   }
 
 }

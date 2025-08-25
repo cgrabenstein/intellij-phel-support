@@ -7,9 +7,6 @@ import com.intellij.psi.PsiElement;
 
 public interface PhelReaderMacro extends PsiElement {
 
-  @Nullable
-  PhelSymbol getSymbol();
-
   //WARNING: toString(...) is skipped
   //matching toString(PhelReaderMacro, ...)
   //methods are not found in null

@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface PhelKeyword extends PhelSForm {
 
-  @NotNull
+  @Nullable
   PhelSymbol getSymbol();
 
   //WARNING: getName(...) is skipped
