@@ -7,9 +7,8 @@ import com.intellij.psi.PsiElement;
 
 public interface PhelForm extends PsiElement {
 
-  //WARNING: form(...) is skipped
-  //matching form(PhelForm, ...)
-  //methods are not found in null
+  @Nullable
+  PhelSymbol getSymbol();
 
   @NotNull
   List<PhelMetadata> getMetas();

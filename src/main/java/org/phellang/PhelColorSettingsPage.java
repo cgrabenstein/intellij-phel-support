@@ -44,6 +44,7 @@ public class PhelColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Macros", PhelAnnotator.MACRO),
             new AttributesDescriptor("Special Forms", PhelAnnotator.SPECIAL_FORM),
             new AttributesDescriptor("Namespace Prefix", PhelAnnotator.NAMESPACE_PREFIX),
+            new AttributesDescriptor("Function Parameters", PhelAnnotator.FUNCTION_PARAMETER),
     };
 
     @Nullable

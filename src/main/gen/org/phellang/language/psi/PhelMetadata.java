@@ -8,7 +8,13 @@ import com.intellij.psi.PsiElement;
 public interface PhelMetadata extends PsiElement {
 
   @Nullable
-  PhelForm getForm();
+  PhelKeyword getKeyword();
+
+  @Nullable
+  PhelMap getMap();
+
+  @Nullable
+  PhelSymbol getSymbol();
 
   //WARNING: toString(...) is skipped
   //matching toString(PhelMetadata, ...)

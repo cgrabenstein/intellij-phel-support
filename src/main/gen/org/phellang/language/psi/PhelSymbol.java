@@ -4,19 +4,20 @@ package org.phellang.language.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
 
-public interface PhelSymbol extends PhelSForm {
+public interface PhelSymbol extends PsiNameIdentifierOwner {
 
   //WARNING: getName(...) is skipped
   //matching getName(PhelSymbol, ...)
   //methods are not found in null
 
-  //WARNING: getQualifiedName(...) is skipped
-  //matching getQualifiedName(PhelSymbol, ...)
+  //WARNING: setName(...) is skipped
+  //matching setName(PhelSymbol, ...)
   //methods are not found in null
 
-  //WARNING: getQualifier(...) is skipped
-  //matching getQualifier(PhelSymbol, ...)
+  //WARNING: getNameIdentifier(...) is skipped
+  //matching getNameIdentifier(PhelSymbol, ...)
   //methods are not found in null
 
   //WARNING: getTextOffset(...) is skipped
