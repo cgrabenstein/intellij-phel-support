@@ -29,8 +29,20 @@ public class PhelMetadataImpl extends ASTWrapperPsiElement implements PhelMetada
 
   @Override
   @Nullable
-  public PhelForm getForm() {
-    return findChildByClass(PhelForm.class);
+  public PhelKeyword getKeyword() {
+    return findChildByClass(PhelKeyword.class);
+  }
+
+  @Override
+  @Nullable
+  public PhelMap getMap() {
+    return findChildByClass(PhelMap.class);
+  }
+
+  @Override
+  @Nullable
+  public PhelSymbol getSymbol() {
+    return findChildByClass(PhelSymbol.class);
   }
 
 }

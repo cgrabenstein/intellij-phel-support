@@ -27,10 +27,4 @@ public class PhelKeywordImpl extends PhelSFormImpl implements PhelKeyword {
     else super.accept(visitor);
   }
 
-  @Override
-  @Nullable
-  public PhelSymbol getSymbol() {
-    return findChildByClass(PhelSymbol.class);
-  }
-
 }

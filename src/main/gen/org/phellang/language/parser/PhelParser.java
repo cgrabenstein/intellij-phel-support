@@ -37,7 +37,7 @@ public class PhelParser implements PsiParser, LightPsiParser {
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(ACCESS, FORM, KEYWORD, LIST,
-      LITERAL, MAP, SYMBOL, VEC),
+      LITERAL, MAP, VEC),
   };
 
   /* ********************************************************** */
@@ -46,7 +46,7 @@ public class PhelParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(builder_, level_, "access")) return false;
     if (!nextTokenIs(builder_, "<access>", DOT, DOTDASH)) return false;
     boolean result_;
-    Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, ACCESS, "<access>");
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, ACCESS, "<access>");
     result_ = access_0(builder_, level_ + 1);
     result_ = result_ && symbol(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, result_, false, null);
@@ -182,7 +182,7 @@ public class PhelParser implements PsiParser, LightPsiParser {
   public static boolean keyword(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "keyword")) return false;
     boolean result_;
-    Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, KEYWORD, "<keyword>");
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, KEYWORD, "<keyword>");
     result_ = consumeToken(builder_, KEYWORD_TOKEN);
     if (!result_) result_ = keyword_1(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, result_, false, null);

@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.phellang.language.psi.PhelSymbol;
 import org.phellang.language.psi.PhelKeyword;
+import org.phellang.language.psi.PhelPsiUtil;
 
 import java.util.Set;
 
@@ -41,6 +42,10 @@ public class PhelAnnotator implements Annotator {
     // Namespace highlighting  
     public static final TextAttributesKey NAMESPACE_PREFIX =
             createTextAttributesKey("PHEL_NAMESPACE", DefaultLanguageHighlighterColors.CLASS_NAME);
+    
+    // Function parameter highlighting (more distinct color)
+    public static final TextAttributesKey FUNCTION_PARAMETER =
+            createTextAttributesKey("PHEL_FUNCTION_PARAMETER", DefaultLanguageHighlighterColors.INSTANCE_FIELD);
 
     // Core Phel special forms
     private static final Set<String> SPECIAL_FORMS = Set.of(
@@ -57,12 +62,79 @@ public class PhelAnnotator implements Annotator {
 
     // Common core functions (subset for performance)
     private static final Set<String> CORE_FUNCTIONS = Set.of(
+            // Collection operations
             "map", "filter", "reduce", "apply", "count", "first", "rest", "cons", "conj",
             "get", "get-in", "assoc", "dissoc", "update", "merge", "keys", "values",
-            "str", "print", "println", "identity", "comp", "partial", "constantly",
-            "inc", "dec", "pos?", "neg?", "zero?", "even?", "odd?", "nil?", "some?",
-            "true?", "false?", "boolean?", "number?", "string?", "keyword?", "symbol?",
-            "list?", "vector?", "map?", "set?", "seq?", "coll?", "empty?", "not-empty"
+            "peek", "pop", "push", "remove", "second", "ffirst", "next", "nnext", "nfirst",
+            
+            // Sequence operations
+            "take", "drop", "take-while", "drop-while", "take-nth", "take-last",
+            "distinct", "reverse", "sort", "sort-by", "shuffle", "flatten",
+            "range", "repeat", "interleave", "interpose", "partition", "split-at", "split-with",
+            
+            // String operations
+            "str", "print", "println", "print-str", "format", "printf",
+            "str-contains?", "slurp", "spit",
+            
+            // Function operations
+            "identity", "comp", "partial", "constantly", "complement", "juxt", "memoize",
+            
+            // Math operations
+            "inc", "dec", "sum", "mean", "extreme",
+            "+", "-", "*", "/", "mod", "rem", "quot",
+            "=", "not=", "<", "<=", ">", ">=", "min", "max", "abs",
+            
+            // Predicates
+            "pos?", "neg?", "zero?", "one?", "even?", "odd?", "nil?", "some?", "all?",
+            "true?", "false?", "truthy?", "boolean?", "number?", "string?", "keyword?", "symbol?",
+            "list?", "vector?", "map?", "set?", "seq?", "coll?", "empty?", "not-empty",
+            "float?", "int?", "function?", "struct?", "hash-map?", "php-array?",
+            "php-resource?", "php-object?", "indexed?", "associative?", "var?",
+            
+            // Random functions
+            "rand", "rand-int", "rand-nth",
+            
+            // Meta and symbol operations
+            "meta", "name", "namespace", "full-name", "symbol", "keyword", "gensym",
+            
+            // Evaluation and compilation
+            "eval", "compile", "macroexpand", "macroexpand-1", "read-string",
+            
+            // Bit operations
+            "bit-and", "bit-or", "bit-xor", "bit-not", "bit-shift-left", "bit-shift-right",
+            "bit-set", "bit-clear", "bit-flip", "bit-test",
+            
+            // Other core functions
+            "not", "compare", "type", "contains?", "find", "find-index",
+            "frequencies", "group-by", "union", "intersection", "difference",
+            "symmetric-difference", "select-keys", "invert", "merge-with", "deep-merge",
+            
+            // String module functions (phel\str)
+            "split", "join", "replace", "replace-first", "trim", "triml", "trimr",
+            "capitalize", "lower-case", "upper-case", "starts-with?", "ends-with?",
+            "blank?", "includes?", "index-of", "last-index-of", "split-lines",
+            "pad-left", "pad-right", "trim-newline", "escape", "re-quote-replacement",
+            
+            // JSON module functions (phel\json)
+            "encode", "decode",
+            
+            // Base64 module functions (phel\base64)
+            "encode-url", "decode-url",
+            
+            // HTML module functions (phel\html)
+            "escape-html", "doctype",
+            
+            // Test module functions (phel\test)
+            "report", "print-summary", "run-tests", "successful?",
+            
+            // REPL module functions (phel\repl)
+            "loaded-namespaces", "resolve", "print-colorful", "println-colorful", "compile-str",
+            
+            // Trace module functions (phel\trace)
+            "dotrace", "reset-trace-state!", "set-trace-id-padding!",
+            
+            // HTTP module functions (phel\http) - most commonly used
+            "request-from-globals", "response-from-map", "response-from-string", "emit-response"
     );
 
     @Override
@@ -80,6 +152,15 @@ public class PhelAnnotator implements Annotator {
     }
 
     private void annotateSymbol(@NotNull PhelSymbol symbol, @NotNull String text, @NotNull AnnotationHolder holder) {
+        // Function parameters (check first, before other classifications)
+        if (PhelPsiUtil.isDefinition(symbol)) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .range(symbol.getTextRange())
+                    .textAttributes(FUNCTION_PARAMETER)
+                    .create();
+            return;
+        }
+        
         // PHP interop patterns
         if (isPhpInterop(text)) {
             holder.newSilentAnnotation(HighlightSeverity.INFORMATION)

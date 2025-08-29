@@ -28,6 +28,12 @@ public class PhelFormImpl extends ASTWrapperPsiElement implements PhelForm {
   }
 
   @Override
+  @Nullable
+  public PhelSymbol getSymbol() {
+    return findChildByClass(PhelSymbol.class);
+  }
+
+  @Override
   @NotNull
   public List<PhelMetadata> getMetas() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, PhelMetadata.class);

@@ -68,5 +68,8 @@
                 implementationClass="org.phellang.PhelQuoteHandler"/>
         <typedHandler
                 implementation="org.phellang.PhelTypedHandler"/>
+        <lang.findUsagesProvider
+                language="Phel"
+                implementationClass="org.phellang.language.psi.PhelFindUsagesProvider"/>
     </extensions>
 </idea-plugin>
